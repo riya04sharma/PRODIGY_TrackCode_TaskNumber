@@ -1,0 +1,132 @@
+import json
+import os
+
+FILE_NAME = "contacts.json"
+
+# Load contacts from file
+def load_contacts():
+    if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, "r") as file:
+            return json.load(file)
+    return []
+
+# Save contacts to file
+def save_contacts(contacts):
+    with open(FILE_NAME, "w") as file:
+        json.dump(contacts, file, indent=4)
+
+# Add a new contact
+def add_contact():
+    name = input("Enter Name: ")
+    phone = input("Enter Phone Number: ")
+    email = input("Enter Email: ")
+
+    contacts = load_contacts()
+    contacts.append({
+        "name": name,
+        "phone": phone,
+        "email": email
+    })
+
+    save_contacts(contacts)
+    print("✅ Contact added successfully!\n")
+
+# View all contacts
+def view_contacts():
+    contacts = load_contacts()
+    if not contacts:
+        print("No contacts found.\n")
+        return
+
+    print("\n--- Contact List ---")
+    for i, contact in enumerate(contacts, start=1):
+        print(f"{i}. Name: {contact['name']}, Phone: {contact['phone']}, Email: {contact['email']}")
+    print()
+
+# Search contact
+def search_contact():
+    name = input("Enter name to search: ").lower()
+    contacts = load_contacts()
+
+    found = False
+    for contact in contacts:
+        if name in contact['name'].lower():
+            print(f"Found -> Name: {contact['name']}, Phone: {contact['phone']}, Email: {contact['email']}")
+            found = True
+
+    if not found:
+        print("❌ Contact not found.\n")
+    else:
+        print()
+
+# Edit contact
+def edit_contact():
+    contacts = load_contacts()
+    name = input("Enter name of contact to edit: ").lower()
+
+    for contact in contacts:
+        if name == contact['name'].lower():
+            print("Leave blank to keep old value.")
+            new_name = input("New Name: ")
+            new_phone = input("New Phone: ")
+            new_email = input("New Email: ")
+
+            if new_name:
+                contact['name'] = new_name
+            if new_phone:
+                contact['phone'] = new_phone
+            if new_email:
+                contact['email'] = new_email
+
+            save_contacts(contacts)
+            print("✅ Contact updated successfully!\n")
+            return
+
+    print("❌ Contact not found.\n")
+
+# Delete contact
+def delete_contact():
+    contacts = load_contacts()
+    name = input("Enter name of contact to delete: ").lower()
+
+    for contact in contacts:
+        if name == contact['name'].lower():
+            contacts.remove(contact)
+            save_contacts(contacts)
+            print("🗑️ Contact deleted successfully!\n")
+            return
+
+    print("❌ Contact not found.\n")
+
+# Main menu
+def main():
+    while True:
+        print("==== Contact Management System ====")
+        print("1. Add Contact")
+        print("2. View Contacts")
+        print("3. Search Contact")
+        print("4. Edit Contact")
+        print("5. Delete Contact")
+        print("6. Exit")
+
+        choice = input("Enter your choice (1-6): ")
+
+        if choice == '1':
+            add_contact()
+        elif choice == '2':
+            view_contacts()
+        elif choice == '3':
+            search_contact()
+        elif choice == '4':
+            edit_contact()
+        elif choice == '5':
+            delete_contact()
+        elif choice == '6':
+            print("👋 Exiting program. Goodbye!")
+            break
+        else:
+            print("❌ Invalid choice. Try again.\n")
+
+# Run the program
+if __name__ == "__main__":
+    main()
